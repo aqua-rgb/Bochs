@@ -50,8 +50,10 @@ public:
 
   virtual bool init_vga_extension(void);
   virtual void reset(unsigned type);
-  virtual void redraw_area(Bit32s x0, Bit32s y0,
-                           Bit32u width, Bit32u height);
+  virtual void redraw_area(unsigned x0, unsigned y0,
+                           unsigned width, unsigned height);
+  void redraw_area(Bit32s x0, Bit32s y0,
+                   Bit32u width, Bit32u height);
   virtual Bit8u mem_read(bx_phy_address addr);
   virtual void mem_write(bx_phy_address addr, Bit8u value);
   virtual void get_text_snapshot(Bit8u **text_snapshot,
@@ -86,6 +88,8 @@ private:
   BX_GEFORCE_SMF void  svga_write_crtc(Bit32u address, unsigned index, Bit8u value);
 
   BX_GEFORCE_SMF void set_irq_level(bool level);
+  BX_GEFORCE_SMF Bit32u get_mc_intr();
+  BX_GEFORCE_SMF void update_irq_level();
 
   BX_GEFORCE_SMF Bit8u register_read8(Bit32u address);
   BX_GEFORCE_SMF void  register_write8(Bit32u address, Bit8u value);
@@ -122,11 +126,24 @@ private:
   BX_GEFORCE_SMF Bit64u get_current_time();
 
   BX_GEFORCE_SMF Bit32u ramht_lookup(Bit32u handle, Bit32u chid);
+
   BX_GEFORCE_SMF void execute_command(Bit32u chid, Bit32u subc, Bit32u method, Bit32u param);
+
+  BX_GEFORCE_SMF void execute_clip(Bit32u chid, Bit32u method, Bit32u param);
+  BX_GEFORCE_SMF void execute_m2mf(Bit32u chid, Bit32u subc, Bit32u method, Bit32u param);
+  BX_GEFORCE_SMF void execute_rop(Bit32u chid, Bit32u method, Bit32u param);
+  BX_GEFORCE_SMF void execute_patt(Bit32u chid, Bit32u method, Bit32u param);
+  BX_GEFORCE_SMF void execute_gdi(Bit32u chid, Bit32u method, Bit32u param);
+  BX_GEFORCE_SMF void execute_imageblit(Bit32u chid, Bit8u cls, Bit32u method, Bit32u param);
+  BX_GEFORCE_SMF void execute_ifc(Bit32u chid, Bit8u cls, Bit32u method, Bit32u param);
+  BX_GEFORCE_SMF void execute_surf2d(Bit32u chid, Bit32u method, Bit32u param);
+  BX_GEFORCE_SMF void execute_iifc(Bit32u chid, Bit32u method, Bit32u param);
+
   BX_GEFORCE_SMF Bit32u color_565_to_888(Bit16u value);
-  BX_GEFORCE_SMF void fillrect(Bit32u chid);
+  BX_GEFORCE_SMF void gdi_fillrect(Bit32u chid, bool clipped);
   BX_GEFORCE_SMF void gdi_blit(Bit32u chid, Bit32u type);
   BX_GEFORCE_SMF void ifc(Bit32u chid);
+  BX_GEFORCE_SMF void iifc(Bit32u chid);
   BX_GEFORCE_SMF void copyarea(Bit32u chid);
   BX_GEFORCE_SMF void move(Bit32u chid);
 
@@ -170,7 +187,6 @@ private:
   Bit32u crtc_config;
   Bit32u crtc_cursor_offset;
   Bit32u crtc_cursor_config;
-  Bit32u crtc_gpio;
   Bit32u ramdac_cu_start_pos;
   Bit32u nvpll;
   Bit32u mpll;
@@ -219,6 +235,17 @@ private:
     Bit32u ifc_words_left;
     Bit32u* ifc_words;
 
+    Bit32u iifc_palette;
+    Bit32u iifc_color_fmt;
+    Bit32u iifc_color_bytes;
+    Bit32u iifc_bpp4;
+    Bit32u iifc_yx;
+    Bit32u iifc_dhw;
+    Bit32u iifc_shw;
+    Bit32u iifc_words_ptr;
+    Bit32u iifc_words_left;
+    Bit32u* iifc_words;
+
     Bit32u blit_operation;
     Bit32u blit_syx;
     Bit32u blit_dyx;
@@ -243,7 +270,11 @@ private:
     Bit32u gdi_operation;
     Bit32u gdi_color_fmt;
     Bit32u gdi_rect_color;
+    Bit32u gdi_rect_clip_yx0;
+    Bit32u gdi_rect_clip_yx1;
     Bit32u gdi_rect_xy;
+    Bit32u gdi_rect_yx0;
+    Bit32u gdi_rect_yx1;
     Bit32u gdi_rect_wh;
     Bit32u gdi_bg_color;
     Bit32u gdi_fg_color;
