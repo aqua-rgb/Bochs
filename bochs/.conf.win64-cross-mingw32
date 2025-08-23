@@ -25,6 +25,7 @@ export DLLTOOL
             --enable-cpu-level=6 \
             --enable-3dnow \
             --enable-x86-64 \
+            --enable-smp \
             --enable-vmx=2 \
             --enable-svm \
             --enable-avx \
