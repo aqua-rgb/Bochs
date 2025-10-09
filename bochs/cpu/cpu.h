@@ -2,7 +2,7 @@
 // $Id$
 /////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (C) 2001-2024  The Bochs Project
+//  Copyright (C) 2001-2025  The Bochs Project
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -463,10 +463,10 @@ typedef void (BX_CPU_C::*BxRepIterationPtr_tR)(bxInstruction_c *) BX_CPP_AttrReg
 
 #if BX_SUPPORT_SMP
 // multiprocessor simulation, we need an array of cpus and memories
-BOCHSAPI extern BX_CPU_C **bx_cpu_array;
+extern BX_CPU_C **bx_cpu_array;
 #else
 // single processor simulation, so there's one of everything
-BOCHSAPI extern BX_CPU_C   bx_cpu;
+extern BX_CPU_C   bx_cpu;
 #endif
 
 // notify internal debugger/instrumentation about memory access
@@ -890,7 +890,7 @@ struct BxOpcodeInfo_t;
 struct bx_cpu_statistics;
 class bx_cpuid_t;
 
-class BOCHSAPI BX_CPU_C : public logfunctions {
+class BX_CPU_C : public logfunctions {
 public: // for now...
 
   unsigned bx_cpuid;
@@ -4778,7 +4778,7 @@ public: // for now...
   BX_SMF int  int_number(unsigned s);
 
   BX_SMF bool SetCR0(bxInstruction_c *i, bx_address val);
-  BX_SMF bool check_CR0(bx_address val) BX_CPP_AttrRegparmN(1);
+  BX_SMF bool check_CR0(bx_address val, bool vmenter = false) BX_CPP_AttrRegparmN(1);
   BX_SMF bool SetCR3(bx_address val) BX_CPP_AttrRegparmN(1);
 #if BX_CPU_LEVEL >= 5
   BX_SMF bool SetCR4(bxInstruction_c *i, bx_address val);
@@ -5324,7 +5324,7 @@ public: // for now...
   BX_SMF void VMexit_TaskSwitch(Bit16u tss_selector, unsigned source) BX_CPP_AttrRegparmN(2);
   BX_SMF void VMexit_PAUSE(void);
   BX_SMF bool VMexit_CLTS(void);
-  BX_SMF void VMexit_MSR(unsigned op, Bit32u msr) BX_CPP_AttrRegparmN(2);
+  BX_SMF void VMexit_MSR(unsigned op, Bit32u msr, Bit32u qualification) BX_CPP_AttrRegparmN(3);
   BX_SMF void VMexit_IO(bxInstruction_c *i, unsigned port, unsigned len) BX_CPP_AttrRegparmN(3);
   BX_SMF Bit32u VMexit_LMSW(bxInstruction_c *i, Bit32u msw) BX_CPP_AttrRegparmN(2);
   BX_SMF bx_address VMexit_CR0_Write(bxInstruction_c *i, bx_address) BX_CPP_AttrRegparmN(2);

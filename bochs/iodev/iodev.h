@@ -315,7 +315,7 @@ public:
   virtual void set_override(bool enabled, void *dev) {
     STUBFUNC(vga, set_override);
   }
-  virtual void refresh_display(void *this_ptr, bool redraw) {
+  virtual void refresh_display(bool redraw) {
     STUBFUNC(vga, refresh_display);
   }
 };
@@ -357,8 +357,8 @@ public:
 #if BX_SUPPORT_IODEBUG
 class BOCHSAPI bx_iodebug_stub_c : public bx_devmodel_c {
 public:
-  virtual void mem_write(BX_CPU_C *cpu, bx_phy_address addr, unsigned len, void *data) {}
-  virtual void mem_read(BX_CPU_C *cpu, bx_phy_address addr, unsigned len, void *data) {}
+  virtual void mem_write(void *cpu, bx_phy_address addr, unsigned len, void *data) {}
+  virtual void mem_read(void *cpu, bx_phy_address addr, unsigned len, void *data) {}
 };
 #endif
 
